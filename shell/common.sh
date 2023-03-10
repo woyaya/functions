@@ -21,23 +21,23 @@ verbose(){
 	LOG_LEVEL=$((LOG_LEVEL+1))
 }
 _LOG(){
-	logger -s "${EXEC}: $@"
+	[ "$LOG2LOGGER" = "1" ] && logger -s "${EXEC}: $@"
 }
 
 DBG(){
-	[ $LOG_LEVEL -ge 6 ] && WHITE "${EXEC}: $@"
+	[ $LOG_LEVEL -ge 5 ] && WHITE "${EXEC}: $@"
 	return 0
 }
 
 LOG(){
-	[ $LOG_LEVEL -ge 5 ] && {
+	[ $LOG_LEVEL -ge 4 ] && {
 		WHITE "${EXEC}: $@"
 #		_LOG "$@"
 	}
 	return 0
 }
 INF(){
-	[ $LOG_LEVEL -ge 4 ] && {
+	[ $LOG_LEVEL -ge 3 ] && {
 		GREEN "${EXEC}: $@"
 		_LOG "$@"
 	}
