@@ -271,3 +271,58 @@ download(){
 	wget $QUIET $1 -O $2
 }
 
+############################
+#           APPs           #
+############################
+_rsync_version(){
+	[ -z "$1" ] && {
+		rsync --version | sed '/rsync *version/!d;s/.*version \([0-9]\)\.\([0-9]\).*/\1\2/'
+		return
+	}
+	ssh -n $1 'rsync --version 2>/dev/null' | sed '/rsync *version/!d;s/.*version \([0-9]\)\.\([0-9]\).*/\1\2/'
+}
+rsync_params(){
+	local version
+	local _base="-H -a"
+	version=`_rsync_version`
+	[ -z "$version" ] && return 1
+	[ "$LOG_LEVEL" -ge "5" ] && _base="-v $_base" || _base="-q $_base"
+	[ "$version" -ge 32 ] && {
+		#echo -n "--open-noatime "
+		echo "$_base -A $@"
+		return 0
+	}
+	[ "$version" -ge 31 ] && {
+		#echo -n "--noatime "
+		echo "$_base -A $@"
+		return 0
+	}
+	#unmatch version, 'atime' is not supported
+	echo "$_base --executability -p $@"
+	return 0;
+}
+############################
+#            OS            #
+############################
+os_name(){
+	local _OS
+	_OS:=$(uname)
+	[ "$_OS" == "Linux" ] && {
+		_OS:=$(uname -o | sed 's/.*\///')
+	}
+	echo "$_OS"
+}
+node_name(){
+	local _NODE
+	_NODE:=$(uname -n)
+	[ "$_NODE" == "localhost" ] && {
+		if [ -n "$HOSTNAME" ]
+		then
+			_NODE=$HOSTNAME
+		else
+			_NODE:=$(getprop net.hostname 2>/dev/null)
+		fi
+	}
+	echo "$_NODE"
+}
+
