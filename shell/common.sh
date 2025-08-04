@@ -282,23 +282,25 @@ _rsync_version(){
 	ssh -n $1 'rsync --version 2>/dev/null' | sed '/rsync *version/!d;s/.*version \([0-9]\)\.\([0-9]\).*/\1\2/'
 }
 rsync_params(){
-	local version
-	local _base="-H -a"
-	version=`_rsync_version`
-	[ -z "$version" ] && return 1
-	[ "$LOG_LEVEL" -ge "5" ] && _base="-v $_base" || _base="-q $_base"
-	[ "$version" -ge 32 ] && {
-		#echo -n "--open-noatime "
-		echo "$_base -A $@"
-		return 0
-	}
-	[ "$version" -ge 31 ] && {
-		#echo -n "--noatime "
-		echo "$_base -A $@"
-		return 0
-	}
-	#unmatch version, 'atime' is not supported
-	echo "$_base --executability -p $@"
+#	local version
+	local _base="-H -a -p"
+#	version=`_rsync_version`
+#	[ -z "$version" ] && return 1
+#	[ "$LOG_LEVEL" -ge "5" ] && _base="-v $_base" || _base="-q $_base"
+#	[ "$version" -ge 32 ] && {
+#		#echo -n "--open-noatime "
+#		#echo "$_base -A $@"
+#		echo "$_base $@"
+#		return 0
+#	}
+#	[ "$version" -ge 31 ] && {
+#		#echo -n "--noatime "
+#		#echo "$_base -A $@"
+#		echo "$_base $@"
+#		return 0
+#	}
+#	#unmatch version, 'atime' is not supported
+	echo "$_base $@"
 	return 0;
 }
 ############################
