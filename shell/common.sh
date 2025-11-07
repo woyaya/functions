@@ -76,6 +76,16 @@ drop_prefix(){
 filename_prefix(){
 	basename $1 | sed 's/\(.*\)\..*/\1/'
 }
+
+# Extracting MAC address from string
+get_mac(){
+	#echo "$@" | sed -nE 's/.*(([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}).*/\1/p'
+	echo "$@" | grep -oE '([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}'
+}
+# Extracting IP address from string
+get_ip(){
+	echo "$@" | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}'
+}
 ############################
 #       Aarray process     #
 ############################
